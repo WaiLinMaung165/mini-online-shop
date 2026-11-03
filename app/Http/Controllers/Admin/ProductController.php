@@ -44,10 +44,10 @@ class ProductController extends Controller
     {
         $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique:products,name',
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'description'    => 'nullable|string',
         ]);
 
@@ -96,8 +96,8 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $request->validate([
-            'category_id' => 'required|exists::categories,id',
-            'name'           => 'required|string|max:100',
+            'category_id' => 'required|exists:categories,id',
+            'name'           => 'required|string|max:100|unique:products,name,' . $id,
             'price'          => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
