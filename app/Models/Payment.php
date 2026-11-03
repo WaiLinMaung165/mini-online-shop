@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Payment extends Model
+{
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $fillable = ['order_id', 'amount', 'payment_method', 'transaction_id', 'status', 'payment_date'];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
+    }
+}
