@@ -11,13 +11,16 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- CSS Styles -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Domine:wght@400..700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
         :root {
             --accent-gold: #ffc107;
@@ -59,6 +62,33 @@
 
         .main-nav-menu .nav-link:hover {
             color: var(--accent-gold) !important;
+        }
+
+        body {
+            padding-top: 30px;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-top: 130px;
+            }
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            min-height: calc(100vh - 30px);
+            display: flex;
+            align-items: center;
+            padding: 40px 0;
+            position: relative;
+        }
+
+        @media (max-width: 991px) {
+            .hero-section {
+                min-height: auto;
+                padding: 60px 0;
+            }
         }
 
         .header-icons a {
@@ -212,13 +242,17 @@
     <!-- Header -->
     @include('layouts.header')
 
-    @include('layouts.banner')
+    @guest
+        @include('layouts.banner')
+    @endguest
     <main>
         @yield('content')
     </main>
 
     <!-- Footer -->
-    @include('layouts.footer')
+    @guest
+        @include('layouts.footer')
+    @endguest
 
     <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

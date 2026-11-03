@@ -1,5 +1,5 @@
 <!-- Header Start -->
-<header class="header-main">
+<header class="header-main fixed-top">
     <div class="container">
         <div class="row align-items-center gy-3">
 
@@ -13,12 +13,19 @@
             <!-- Navigation Links -->
             <div class="col-lg-6 order-3 order-lg-2" style="font-family: 'Crimson Text', serif;">
                 <ul class="nav justify-content-center main-nav-menu">
-                    <li class="nav-item"><a class="nav-link active text-warning"
-                            href="{{ route('shop.index') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                    @guest
+                        <!-- Login မဝင်ခင်ပေါ်မည့် Menu များ -->
+                        <li class="nav-item"><a class="nav-link active text-warning" href="{{ route('shop.index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
+                    @endguest
+
+                    @auth
+                        <!-- Login ဝင်ပြီးသွားရင် Shop နဲ့ My Orders သို့မဟုတ် အဓိက လိုအပ်သည်များသာ ပြရန် -->
+                        <li class="nav-item"><a class="nav-link active text-warning" href="{{ route('shop.index') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
+                    @endauth
                 </ul>
             </div>
 
@@ -30,6 +37,7 @@
                     <a href="#" title="Shopping Cart"><i class="fa-solid fa-bag-shopping"></i><span
                             class="badge-count" id="cart-count">2</span></a>
                     <div class="vr bg-secondary d-none d-sm-block" style="height: 20px; opacity: 0.4;"></div>
+
                     @guest
                         <div class="d-flex align-items-center gap-2 ms-1" style="font-family: 'Crimson Text', serif;">
                             <a href="{{ route('login') }}" class="btn-auth-login" style="font-size: 15px;">Login</a>
@@ -37,6 +45,7 @@
                                 style="font-size: 15px;">Register</a>
                         </div>
                     @endguest
+
                     @auth
                         <div class="dropdown">
                             <a href="#"
@@ -53,12 +62,12 @@
                             </a>
 
                             <!-- Dropdown Menu -->
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow"
+                            <ul class="dropdown-menu dropdown-menu-white dropdown-menu-end shadow"
                                 aria-labelledby="userDropdown" style="font-family: 'Crimson Text', serif;">
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item py-2 text-primary"><i
+                                        <button type="submit" class="dropdown-item py-2 text-success"><i
                                                 class="fa-solid fa-right-from-bracket me-2"></i>Logout</button>
                                     </form>
                                 </li>

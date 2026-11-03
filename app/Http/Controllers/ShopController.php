@@ -3,20 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // dd(Auth::user()->role);
+        $categories = Category::all();
+        $query = Product::with('category');
 
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
         }
 
-        $products = Product::all();
-        return view('shop.index', compact('products'));
+        if (Auth::check()) {
+            $products = $query->latest()->get();
+        } else {
+            $products = $query->latest()->take(10)->get();
+        }
+
+        return view('shop.index', compact('products', 'categories'));
     }
 }
