@@ -1,3 +1,4 @@
+@if (request()->routeIs('shop.index'))
 <section class="hero-section d-flex align-items-center min-vh-100 position-relative">
     <div class="container">
         <div class="row align-items-center gy-4">
@@ -29,3 +30,4 @@
         </div>
     </div>
 </section>
+@endif

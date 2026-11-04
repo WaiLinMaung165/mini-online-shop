@@ -8,7 +8,7 @@
             <h4 class="fw-bold text-dark mb-0">Category Details</h4>
             <div class="d-flex gap-2">
                 @can('categories.edit')
-                    <a href="{{ route('admin.categories.edit', $category->id) }}"
+                    <a href="{{ route('admin.categories.edit', $category) }}"
                         class="btn btn-primary btn-sm fw-semibold px-3 py-2">
                         <i class="fa-solid fa-pen-to-square me-1"></i> Edit
                     </a>

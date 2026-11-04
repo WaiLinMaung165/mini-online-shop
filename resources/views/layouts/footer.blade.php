@@ -1,3 +1,4 @@
+@if (request()->routeIs('shop.index'))
 <footer class="footer-main">
     <div class="container">
         <div class="row g-4 mb-5">
@@ -60,3 +61,4 @@
         </div>
     </div>
 </footer>
+@endif

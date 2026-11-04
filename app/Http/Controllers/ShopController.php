@@ -26,4 +26,13 @@ class ShopController extends Controller
 
         return view('shop.index', compact('products', 'categories'));
     }
+
+    public function show($id){
+        $product = Product::with('category')->findOrFail($id);
+        $relatedProducts = Product::where('category_id', $product->category->category_id)
+                                  ->where('id','!=',$id)
+                                  ->take(4)
+                                  ->get();
+        return view('shop.show', compact('product','relatedProducts'));
+    }
 }

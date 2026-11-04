@@ -83,7 +83,7 @@
                             <!-- Description & See Details -->
                             <p class="text-muted mb-1"
                                 style="font-size: 13px; line-height: 1.5; overflow: hidden; margin-top: 5px; font-family: 'Albert Sans', sans-serif;">
-                                {{ Str::limit($product->description, 50, '...') }} <a href="#"
+                                {{ Str::limit($product->description, 50, '...') }} <a href="{{ route('shop.show', $product->id) }}"
                                     class="text-primary text-decoration-none fw-semibold" style="font-size: 11px;">See
                                     Details</a>
                             </p>
@@ -110,11 +110,11 @@
                             <!-- Dynamic Action Button -->
                             <div class="mt-auto">
                                 @guest
-                                    <a href="{{ route('login') }}"
-                                        class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white text-decoration-none shadow-sm"
+                                    <button type="button" onclick="showRegisterAlert('{{ route('register') }}')"
+                                        class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white text-decoration-none shadow-sm border-0"
                                         style="font-size: 12px; padding: 5px;">
                                         Buy Now
-                                    </a>
+                                    </button>
                                 @endguest
 
                                 @auth
@@ -193,42 +193,66 @@
         }
     </style>
 
-    <!-- JavaScript for Quantity (+ / -) with Stock Validation -->
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function incrementQty(btn, maxStock) {
-        let input = btn.previousElementSibling;
-        let currentValue = parseInt(input.value);
+            let input = btn.previousElementSibling;
+            let currentValue = parseInt(input.value);
 
-        if (maxStock === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Out of Stock',
-                text: 'Sorry, this watch is currently out of stock.',
-                confirmButtonColor: '#343a40',
-                timer: 2000
-            });
-            return;
+            if (maxStock === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Out of Stock',
+                    text: 'Sorry, this watch is currently out of stock.',
+                    confirmButtonColor: '#343a40',
+                    timer: 2000
+                });
+                return;
+            }
+
+            if (currentValue < maxStock) {
+                input.value = currentValue + 1;
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Stock Limit Reached',
+                    text: 'The requested quantity exceeds available stock (' + maxStock + ' units left).',
+                    confirmButtonColor: '#343a40',
+                    confirmButtonText: 'OK'
+                });
+            }
         }
 
-        if (currentValue < maxStock) {
-            input.value = currentValue + 1;
-        } else {
+        function decrementQty(btn) {
+            let input = btn.nextElementSibling;
+            let currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+
+        function showRegisterAlert(registerUrl) {
+            if (typeof Swal === 'undefined') {
+                alert('Account Required! Please register first to purchase products.');
+                window.location.href = registerUrl;
+                return;
+            }
+
             Swal.fire({
+                title: 'Account Required!',
+                text: 'Please register first to purchase products.',
                 icon: 'info',
-                title: 'Stock Limit Reached',
-                text: 'The requested quantity exceeds available stock (' + maxStock + ' units left).',
-                confirmButtonColor: '#343a40',
-                confirmButtonText: 'OK'
+                showCancelButton: true,
+                confirmButtonColor: '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Register Now',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = registerUrl;
+                }
             });
         }
-    }
-
-    function decrementQty(btn) {
-        let input = btn.nextElementSibling;
-        let currentValue = parseInt(input.value);
-        if (currentValue > 1) {
-            input.value = currentValue - 1;
-        }
-    }
     </script>
 @endsection

@@ -62,18 +62,18 @@ class CategoryController extends Controller implements HasMiddleware
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Category $category)
     {
-        $category = Category::findOrFail($id);
+        // $category = Category::findOrFail($id);
         return view('admin.categories.show', compact('category'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        $category = Category::findOrFail($id);
+        // $category = Category::findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -102,12 +102,21 @@ class CategoryController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        try {
+            $category->delete();
 
-        return redirect()->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
+            return redirect()->route('admin.categories.index')
+                ->with('success', 'Category deleted successfully!');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()->route('admin.categories.index')
+                    ->with('error', 'Cannot delete this category because there are products associated with it!');
+            }
+
+            return redirect()->route('admin.categories.index')
+                ->with('error', 'An error occurred while deleting the category.');
+        }
     }
 }

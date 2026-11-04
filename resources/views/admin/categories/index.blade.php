@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container-fluid px-4 py-3">
-
         <!-- Header & Add Category Button -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold text-dark mb-0">Categories Management</h4>
@@ -17,6 +16,14 @@
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm py-2" role="alert">
                 <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        {{-- Fail Alert Message --}}
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm py-2" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i>{{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
@@ -62,14 +69,14 @@
                                     <td class="text-end pe-4">
                                         <div class="d-flex justify-content-end gap-2">
                                             <!-- View Detail Icon -->
-                                            <a href="{{ route('admin.categories.show', $category->id) }}"
+                                            <a href="{{ route('admin.categories.show', $category) }}"
                                                 class="btn btn-sm btn-outline-info" title="View Details">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
 
                                             <!-- Edit Icon -->
                                             @can('categories.edit')
-                                                <a href="{{ route('admin.categories.edit', $category->id) }}"
+                                                <a href="{{ route('admin.categories.edit', $category) }}"
                                                     class="btn btn-sm btn-outline-warning" title="Edit Category">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
@@ -79,7 +86,7 @@
                                             @can('categories.delete')
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-danger px-2 py-1 delete-btn"
-                                                    data-url="{{ route('admin.categories.destroy', $category->id) }}"
+                                                    data-url="{{ route('admin.categories.destroy', $category) }}"
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal" title="Delete">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
