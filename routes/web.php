@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 // Shop Home Page
 Route::get('/', [ShopController::class, 'index'])->name('shop.index');
-Route::get('/shop/product/{id}', [ShopController::class, 'show'])->name('shop.show');
-
+Route::get('/shop/{product}', [ShopController::class, 'show'])->name('shop.show');
 // Admin Dashboard Route
 Route::middleware(['auth', 'permission:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {

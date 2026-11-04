@@ -22,7 +22,13 @@ class User extends Authenticatable
 
     public $incrementing = true;
     protected $keyType = 'int';
-    protected $fillable = ['name','email','phone','password','role'];
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'password',
+        'role',
+    ];
 
     /**
      * Get the attributes that should be cast.

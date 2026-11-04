@@ -11,11 +11,27 @@ class Product extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
-    protected $fillable = ['category_id', 'name', 'image', 'description', 'price', 'stock_quantity'];
-
+    protected $fillable = [
+        'category_id',
+        'name',
+        'gender',
+        'slug',
+        'image',
+        'description',
+        'price',
+    ];
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class);
     }
 
     public function orderItems()

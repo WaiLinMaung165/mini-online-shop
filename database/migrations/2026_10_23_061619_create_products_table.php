@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->onDelete('restrict');
             $table->string('name');
-            $table->string('image');
+            $table->string('image')->nullable();
+            $table->string('gender')->default('unisex');
+            $table->string('slug')->unique();
             $table->text('description');
-            $table->decimal('price',10,2);
-            $table->integer('stock_quantity');
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }

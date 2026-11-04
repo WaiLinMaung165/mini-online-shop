@@ -7,7 +7,6 @@
     <div class="container py-4" style="font-family: 'Domine', serif;">
 
         <!-- Category Filter Bar -->
-
         @auth
             <div class="d-flex justify-content-center flex-wrap gap-2 mb-4" style="margin-top: 70px;">
                 <a href="{{ route('shop.index') }}"
@@ -36,6 +35,9 @@
         <!-- Products Grid -->
         <div class="product-grid-5">
             @forelse($products as $product)
+                @php
+                    $stock = $product->inventory->stock_quantity ?? 0;
+                @endphp
                 <div class="product-item">
                     <div class="card h-100 border shadow-sm rounded-4 overflow-hidden position-relative bg-white p-2">
 
@@ -49,9 +51,9 @@
 
                         <!-- Stock Badge -->
                         <div class="position-absolute top-0 end-0 m-2 z-index-1">
-                            @if ($product->stock_quantity == 0)
+                            @if ($stock == 0)
                                 <span class="badge bg-danger p-1" style="font-size: 9px;">Out</span>
-                            @elseif ($product->stock_quantity < 3)
+                            @elseif ($stock < 3)
                                 <span class="badge bg-warning text-dark p-1" style="font-size: 9px;">Low</span>
                             @else
                                 <span class="badge bg-secondary text-white p-1" style="font-size: 9px;">In Stock</span>
@@ -80,12 +82,14 @@
                                 {{ $product->name }}
                             </h6>
 
-                            <!-- Description & See Details -->
+                            <!-- Description & See Details (Slug Binding) -->
                             <p class="text-muted mb-1"
                                 style="font-size: 13px; line-height: 1.5; overflow: hidden; margin-top: 5px; font-family: 'Albert Sans', sans-serif;">
-                                {{ Str::limit($product->description, 50, '...') }} <a href="{{ route('shop.show', $product->id) }}"
-                                    class="text-primary text-decoration-none fw-semibold" style="font-size: 11px;">See
-                                    Details</a>
+                                {{ Str::limit($product->description, 50, '...') }}
+                                <a href="{{ route('shop.show', $product) }}"
+                                    class="text-primary text-decoration-none fw-semibold" style="font-size: 11px;">
+                                    See Details
+                                </a>
                             </p>
 
                             <!-- Price & Quantity Selector -->
@@ -102,7 +106,7 @@
                                     <input type="text" class="form-control text-center px-1 py-0 bg-white fw-bold"
                                         value="1" readonly style="font-size: 13px;">
                                     <button class="btn btn-outline-success px-2 py-0 fw-bold" type="button"
-                                        onclick="incrementQty(this, {{ $product->stock_quantity }})"
+                                        onclick="incrementQty(this, {{ $stock }})"
                                         style="font-size: 15px; line-height: 1.5;">+</button>
                                 </div>
                             </div>
@@ -118,10 +122,17 @@
                                 @endguest
 
                                 @auth
-                                    <button class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
-                                        style="font-size: 12px; padding: 5px;">
-                                        <i class="fa-solid fa-cart-shopping me-1"></i> Add to Cart
-                                    </button>
+                                    @if ($stock > 0)
+                                        <button class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
+                                            style="font-size: 12px; padding: 5px;">
+                                            <i class="fa-solid fa-cart-shopping me-1"></i> Add to Cart
+                                        </button>
+                                    @else
+                                        <button class="btn btn-secondary btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
+                                            style="font-size: 12px; padding: 5px;" disabled>
+                                            Out of Stock
+                                        </button>
+                                    @endif
                                 @endauth
                             </div>
                         </div>
@@ -139,7 +150,7 @@
 
     </div>
 
-    <!-- Custom CSS for 5 items per row with balanced layout -->
+    <!-- Custom CSS -->
     <style>
         @media (min-width: 992px) {
             .product-grid-5 {

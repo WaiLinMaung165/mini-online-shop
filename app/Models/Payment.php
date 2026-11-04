@@ -2,19 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-    protected $primaryKey = 'id';
+    use HasFactory;
 
-    public $incrementing = true;
-    protected $keyType = 'int';
-
-    protected $fillable = ['order_id', 'amount', 'payment_method', 'transaction_id', 'status', 'payment_date'];
+    protected $fillable = [
+        'order_id',
+        'payment_method_id',
+        'payment_slip',
+        'amount',
+        'status',
+    ];
 
     public function order()
     {
-        return $this->belongsTo(Order::class, 'order_id', 'order_id');
+        return $this->belongsTo(Order::class);
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 }

@@ -20,11 +20,12 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light text-uppercase fs-7">
                             <tr>
-                                <th class="py-3" style="width: 15%;">Image</th>
-                                <th class="py-3" style="width: 25%;">Product Name</th>
+                                <th class="py-3" style="width: 12%;">Image</th>
+                                <th class="py-3" style="width: 22%;">Product Name</th>
                                 <th class="py-3" style="width: 15%;">Category</th>
-                                <th class="py-3" style="width: 15%;">Price</th>
-                                <th class="py-3" style="width: 15%;">Stock</th>
+                                <th class="py-3" style="width: 12%;">Gender</th>
+                                <th class="py-3" style="width: 12%;">Price</th>
+                                <th class="py-3" style="width: 12%;">Stock</th>
                                 <th class="py-3 text-center" style="width: 15%;">Actions</th>
                             </tr>
                         </thead>
@@ -48,45 +49,58 @@
                                             {{ $product->category->name ?? 'Uncategorized' }}
                                         </span>
                                     </td>
+                                    <td>
+                                        @if($product->gender == 'men')
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">Men</span>
+                                        @elseif($product->gender == 'women')
+                                            <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Women</span>
+                                        @else
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">Unisex</span>
+                                        @endif
+                                    </td>
                                     <td class="fw-semibold text-success">
                                         ${{ number_format($product->price, 2) }}
                                     </td>
                                     <td>
-                                        @if ($product->stock_quantity == 0)
+                                        @php
+                                            $stock = $product->inventory->stock_quantity ?? 0;
+                                        @endphp
+
+                                        @if ($stock == 0)
                                             <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">
                                                 Out of Stock
                                             </span>
-                                        @elseif ($product->stock_quantity < 3)
+                                        @elseif ($stock < 3)
                                             <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">
-                                                {{ $product->stock_quantity }} left stock
+                                                {{ $stock }} left stock
                                             </span>
                                         @else
                                             <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">
-                                                {{ $product->stock_quantity }} in stock
+                                                {{ $stock }} in stock
                                             </span>
                                         @endif
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <!-- View Button -->
-                                            <a href="{{ route('admin.products.show', $product->id) }}"
+                                            <!-- View Button (Slug based) -->
+                                            <a href="{{ route('admin.products.show', $product) }}"
                                                 class="btn btn-sm btn-outline-info px-2 py-1" title="View">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
 
-                                            <!-- Edit Button -->
+                                            <!-- Edit Button (Slug based) -->
                                             @can('products.edit')
-                                                <a href="{{ route('admin.products.edit', $product->id) }}"
+                                                <a href="{{ route('admin.products.edit', $product) }}"
                                                     class="btn btn-sm btn-outline-primary px-2 py-1" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
                                             @endcan
 
-                                            <!-- Delete Button (Triggers Global Delete Modal) -->
+                                            <!-- Delete Button (Slug based) -->
                                             @can('products.delete')
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-danger px-2 py-1 delete-btn"
-                                                    data-url="{{ route('admin.products.destroy', $product->id) }}"
+                                                    data-url="{{ route('admin.products.destroy', $product) }}"
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal" title="Delete">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>

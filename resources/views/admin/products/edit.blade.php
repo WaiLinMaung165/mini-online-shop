@@ -27,7 +27,8 @@
     <!-- Form Card -->
     <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
-            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+            <!-- Slug -->
+            <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -52,15 +53,15 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="image" class="form-label fw-semibold text-secondary">Product Image</label>
-                        <span class="form-text text-muted small">Allowed formats: jpeg, png, jpg, webp (Max: 2MB)</span>
+                        {{-- <span class="form-text text-muted small d-block">Allowed formats: jpeg, png, jpg, webp (Max: 2MB)</span> --}}
                         <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*" onchange="previewImage(event)">
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Row 2: Category Selection -->
-                    <div class="col-md-12 mb-3">
+                    <!-- Row 2: Category & Gender (ဘေးချင်းယှဉ်ထားသည်) -->
+                    <div class="col-md-6 mb-3">
                         <label for="category_id" class="form-label fw-semibold text-secondary">Category <span class="text-danger">*</span></label>
                         <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
                             <option value="" disabled>Select Category</option>
@@ -71,6 +72,19 @@
                             @endforeach
                         </select>
                         @error('category_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="gender" class="form-label fw-semibold text-secondary">Gender <span class="text-danger">*</span></label>
+                        <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender" required>
+                            <option value="" disabled>Select Gender</option>
+                            <option value="unisex" {{ old('gender', $product->gender) == 'unisex' ? 'selected' : '' }}>Unisex</option>
+                            <option value="men" {{ old('gender', $product->gender) == 'men' ? 'selected' : '' }}>Men</option>
+                            <option value="women" {{ old('gender', $product->gender) == 'women' ? 'selected' : '' }}>Women</option>
+                        </select>
+                        @error('gender')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -86,7 +100,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="stock_quantity" class="form-label fw-semibold text-secondary">Stock Quantity <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control @error('stock_quantity') is-invalid @enderror" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', $product->stock_quantity) }}" placeholder="0" required>
+                        <input type="number" class="form-control @error('stock_quantity') is-invalid @enderror" id="stock_quantity" name="stock_quantity" value="{{ old('stock_quantity', optional($product->inventory)->stock_quantity) }}" placeholder="0" required>
                         @error('stock_quantity')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -95,7 +109,7 @@
                     <!-- Row 4: Description -->
                     <div class="col-md-12 mb-4">
                         <label for="description" class="form-label fw-semibold text-secondary">Description</label>
-                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="4" placeholder="Enter watch features, movement type, strap material, etc.">{{ old('description', $product->description) }}</textarea>
+                        <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="4" placeholder="Enter product features, materials, etc.">{{ old('description', $product->description) }}</textarea>
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -113,6 +127,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function previewImage(event){
         const reader = new FileReader();

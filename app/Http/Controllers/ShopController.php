@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +12,7 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         $categories = Category::all();
-        $query = Product::with('category');
+        $query = Product::with(['category', 'inventory']);
 
         if ($request->has('category') && $request->category != '') {
             $query->where('category_id', $request->category);
@@ -27,12 +27,16 @@ class ShopController extends Controller
         return view('shop.index', compact('products', 'categories'));
     }
 
-    public function show($id){
-        $product = Product::with('category')->findOrFail($id);
-        $relatedProducts = Product::where('category_id', $product->category->category_id)
-                                  ->where('id','!=',$id)
-                                  ->take(4)
-                                  ->get();
-        return view('shop.show', compact('product','relatedProducts'));
+    public function show(Product $product)
+    {
+        $product->load(['category', 'inventory']);
+
+        $relatedProducts = Product::with(['category', 'inventory'])
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        return view('shop.show', compact('product', 'relatedProducts'));
     }
 }

@@ -7,7 +7,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold text-dark mb-0">Product Details</h4>
         <div class="d-flex gap-2">
-            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-warning btn-sm fw-semibold px-3 py-2 text-dark">
+            <!-- Slug ဖြင့် Edit သို့ သွားရန် -->
+            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-warning btn-sm fw-semibold px-3 py-2 text-dark">
                 <i class="fa-solid fa-pen-to-square me-1"></i> Edit Product
             </a>
             <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary btn-sm fw-semibold px-3 py-2">
@@ -33,21 +34,36 @@
 
                 <!-- Product Information Column -->
                 <div class="col-md-8">
-                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 mb-2 fw-semibold">
-                        {{ $product->category->name ?? 'Uncategorized' }}
-                    </span>
+                    <div class="d-flex gap-2 mb-2">
+                        <span class="badge bg-info text-dark bg-opacity-10 text-info fw-semibold px-3 py-1">
+                            {{ $product->category->name ?? 'Uncategorized' }}
+                        </span>
+
+                        @if($product->gender == 'men')
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 fw-semibold">Men</span>
+                        @elseif($product->gender == 'women')
+                            <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-1 fw-semibold">Women</span>
+                        @else
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-1 fw-semibold">Unisex</span>
+                        @endif
+                    </div>
+
                     <h2 class="fw-bold text-dark mb-3">{{ $product->name }}</h2>
 
                     <h3 class="text-success fw-bold mb-3">${{ number_format($product->price, 2) }}</h3>
 
                     <div class="mb-3">
                         <span class="fw-semibold text-secondary">Stock Status: </span>
-                        @if ($product->stock_quantity == 0)
+                        @php
+                            $stock = $product->inventory->stock_quantity ?? 0;
+                        @endphp
+
+                        @if ($stock == 0)
                             <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Out of Stock</span>
-                        @elseif ($product->stock_quantity < 3)
-                            <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">{{ $product->stock_quantity }} left stock</span>
+                        @elseif ($stock < 3)
+                            <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">{{ $stock }} left stock</span>
                         @else
-                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">{{ $product->stock_quantity }} in stock</span>
+                            <span class="badge bg-success bg-opacity-10 text-success px-2 py-1">{{ $stock }} in stock</span>
                         @endif
                     </div>
 
