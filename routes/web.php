@@ -7,12 +7,15 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
 // Shop Home Page
 Route::get('/', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{product}', [ShopController::class, 'show'])->name('shop.show');
+Route::resource('cart', CartController::class)->except(['create','edit','show']);
+
 // Admin Dashboard Route
 Route::middleware(['auth', 'permission:access-admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {

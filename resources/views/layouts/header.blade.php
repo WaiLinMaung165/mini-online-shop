@@ -14,28 +14,22 @@
             <div class="col-lg-6 order-3 order-lg-2" style="font-family: 'Crimson Text', serif;">
                 <ul class="nav justify-content-center main-nav-menu">
                     @guest
-                        <!-- Login မဝင်ခင်ပေါ်မည့် Menu များ -->
-                        <li class="nav-item"><a class="nav-link active text-warning" href="{{ route('shop.index') }}">Home</a></li>
+                        <!-- Login Menu -->
+                        <li class="nav-item"><a class="nav-link {{ Request::routeIs('shop.index') ? 'active text-warning' : ''}}" href="{{ route('shop.index') }}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
                     @endguest
-
-                    @auth
-                        <!-- Login ဝင်ပြီးသွားရင် Shop နဲ့ My Orders သို့မဟုတ် အဓိက လိုအပ်သည်များသာ ပြရန် -->
-                        <li class="nav-item"><a class="nav-link active text-warning" href="{{ route('shop.index') }}">Shop</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Orders</a></li>
-                    @endauth
                 </ul>
             </div>
 
             <!-- Icons & Auth Buttons -->
             <div class="col-lg-4 col-6 order-2 order-lg-3 text-end">
                 <div class="header-icons d-flex align-items-center justify-content-end gap-3">
-                    <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i><span
-                            class="badge-count">0</span></a>
-                    <a href="#" title="Shopping Cart"><i class="fa-solid fa-bag-shopping"></i><span
-                            class="badge-count" id="cart-count">2</span></a>
+                    {{-- <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i><span
+                            class="badge-count">0</span></a> --}}
+                    <a href="{{ route('cart.index') }}" title="Shopping Cart" class="{{ Request::routeIs('cart.index') ? 'text-warning fw-bold' : ''}}"><i class="fa-solid fa-cart-shopping"></i><span
+                            class="badge-count bg-success" id="cart-count">{{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}</span></a>
                     <div class="vr bg-secondary d-none d-sm-block" style="height: 20px; opacity: 0.4;"></div>
 
                     @guest

@@ -7,29 +7,51 @@
     <div class="container py-4" style="font-family: 'Domine', serif;">
 
         <!-- Category Filter Bar -->
-        @auth
-            <div class="d-flex justify-content-center flex-wrap gap-2 mb-4" style="margin-top: 70px;">
-                <a href="{{ route('shop.index') }}"
-                    class="btn btn-sm {{ !request('category') ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill">
-                    All Brands
+        <div class="d-flex justify-content-center flex-wrap gap-2 mb-2" style="margin-top: 70px;" id="back-to-collection">
+            <a href="{{ route('shop.index') }}"
+                class="btn btn-sm category-filter-btn {{ !request('category') ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                data-category="">
+                All Brands
+            </a>
+
+            @foreach ($categories as $category)
+                <a href="{{ route('shop.index', ['category' => $category->id]) }}"
+                    class="btn btn-sm category-filter-btn {{ request('category') == $category->id ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                    data-category="{{ $category->id }}">
+                    {{ $category->name }}
                 </a>
-                @foreach ($categories as $category)
-                    <a href="{{ route('shop.index', ['category' => $category->id]) }}"
-                        class="btn btn-sm {{ request('category') == $category->id ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill">
-                        {{ $category->name }}
-                    </a>
-                @endforeach
-            </div>
-        @endauth
+            @endforeach
+        </div>
+
+        <!-- Gender Filter Bar (Men, Women, Unisex) -->
+        <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+            <a href="{{ route('shop.index') }}"
+                class="btn btn-sm gender-filter-btn {{ !request('gender') ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                style="font-size: 12px;" data-gender="">
+                All Genders
+            </a>
+            <a href="{{ route('shop.index', ['gender' => 'men']) }}"
+                class="btn btn-sm gender-filter-btn {{ request('gender') == 'men' ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                style="font-size: 12px;" data-gender="men">
+                Men
+            </a>
+            <a href="{{ route('shop.index', ['gender' => 'women']) }}"
+                class="btn btn-sm gender-filter-btn {{ request('gender') == 'women' ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                style="font-size: 12px;" data-gender="women">
+                Women
+            </a>
+            <a href="{{ route('shop.index', ['gender' => 'unisex']) }}"
+                class="btn btn-sm gender-filter-btn {{ request('gender') == 'unisex' ? 'btn-warning text-dark fw-bold' : 'btn-outline-dark' }} px-3 rounded-pill"
+                style="font-size: 12px;" data-gender="unisex">
+                Unisex
+            </a>
+        </div>
 
         <!-- Section Title -->
         <div class="d-flex justify-content-between align-items-center mb-3" id="shop-products">
             <h5 class="fw-bold text-dark mb-0" style="font-family: 'Crimson Text', serif;">
                 <i class="fa-solid fa-clock me-2 text-warning"></i> Watches Collection
             </h5>
-            @guest
-                <span class="text-muted small">Showing Top Products (Login to view categories)</span>
-            @endguest
         </div>
 
         <!-- Products Grid -->
@@ -75,14 +97,11 @@
 
                         <!-- Card Body -->
                         <div class="card-body d-flex flex-column px-1 py-3 text-start">
-
-                            <!-- Product Title -->
                             <h6 class="card-title text-center fw-bold text-dark mb-1 text-truncate" style="font-size: 14px;"
                                 title="{{ $product->name }}">
                                 {{ $product->name }}
                             </h6>
 
-                            <!-- Description & See Details (Slug Binding) -->
                             <p class="text-muted mb-1"
                                 style="font-size: 13px; line-height: 1.5; overflow: hidden; margin-top: 5px; font-family: 'Albert Sans', sans-serif;">
                                 {{ Str::limit($product->description, 50, '...') }}
@@ -92,14 +111,11 @@
                                 </a>
                             </p>
 
-                            <!-- Price & Quantity Selector -->
                             <div class="d-flex align-items-center justify-content-between my-3">
-                                <!-- Price -->
                                 <div class="text-dark fw-bold" style="font-size: 14px;">
                                     ${{ number_format($product->price, 2) }}
                                 </div>
 
-                                <!-- Quantity Selector (- / + Buttons) -->
                                 <div class="input-group input-group-sm" style="width: 95px;">
                                     <button class="btn btn-outline-danger px-2 py-0 fw-bold" type="button"
                                         onclick="decrementQty(this)" style="font-size: 15px; line-height: 1.5;">-</button>
@@ -110,31 +126,27 @@
                                         style="font-size: 15px; line-height: 1.5;">+</button>
                                 </div>
                             </div>
+                            <form action="{{ route('cart.store') }}" method="POST" class="add-to-cart-form">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="quantity" value="1" class="cart-qty-input">
+                                <div class="mt-auto">
 
-                            <!-- Dynamic Action Button -->
-                            <div class="mt-auto">
-                                @guest
-                                    <button type="button" onclick="showRegisterAlert('{{ route('register') }}')"
-                                        class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white text-decoration-none shadow-sm border-0"
-                                        style="font-size: 12px; padding: 5px;">
-                                        Buy Now
-                                    </button>
-                                @endguest
-
-                                @auth
                                     @if ($stock > 0)
-                                        <button class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
+                                        <button
+                                            class="btn btn-success btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
                                             style="font-size: 12px; padding: 5px;">
                                             <i class="fa-solid fa-cart-shopping me-1"></i> Add to Cart
                                         </button>
                                     @else
-                                        <button class="btn btn-secondary btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
+                                        <button
+                                            class="btn btn-secondary btn-sm w-100 rounded-pill fw-semibold text-white shadow-sm"
                                             style="font-size: 12px; padding: 5px;" disabled>
                                             Out of Stock
                                         </button>
                                     @endif
-                                @endauth
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -186,12 +198,6 @@
             }
         }
 
-        @media (max-width: 575px) {
-            .product-grid-5>.product-item {
-                margin-bottom: 12px;
-            }
-        }
-
         .card {
             width: 100%;
             margin: 0 auto;
@@ -204,13 +210,12 @@
         }
     </style>
 
-    <!-- SweetAlert2 CDN -->
+    <!-- SweetAlert2 & Corrected AJAX Filtering Script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function incrementQty(btn, maxStock) {
             let input = btn.previousElementSibling;
             let currentValue = parseInt(input.value);
-
             if (maxStock === 0) {
                 Swal.fire({
                     icon: 'warning',
@@ -221,16 +226,19 @@
                 });
                 return;
             }
-
             if (currentValue < maxStock) {
                 input.value = currentValue + 1;
+
+                let formQtyInput = btn.closest('.card-body').querySelector('.cart-qty-input');
+                if (formQtyInput) {
+                    formQtyInput.value = input.value;
+                }
             } else {
                 Swal.fire({
                     icon: 'info',
                     title: 'Stock Limit Reached',
                     text: 'The requested quantity exceeds available stock (' + maxStock + ' units left).',
-                    confirmButtonColor: '#343a40',
-                    confirmButtonText: 'OK'
+                    confirmButtonColor: '#343a40'
                 });
             }
         }
@@ -240,30 +248,147 @@
             let currentValue = parseInt(input.value);
             if (currentValue > 1) {
                 input.value = currentValue - 1;
+
+                let formQtyInput = btn.closest('.card-body').querySelector('.cart-qty-input');
+                if (formQtyInput) {
+                    formQtyInput.value = input.value;
+                }
             }
         }
 
-        function showRegisterAlert(registerUrl) {
-            if (typeof Swal === 'undefined') {
-                alert('Account Required! Please register first to purchase products.');
-                window.location.href = registerUrl;
-                return;
-            }
+        // Active States Update Function
+        function updateActiveFilters(searchUrl) {
+            let fullUrl = new URL(searchUrl, window.location.origin);
+            let currentCategory = fullUrl.searchParams.get('category') || "";
+            let currentGender = fullUrl.searchParams.get('gender') || "";
 
-            Swal.fire({
-                title: 'Account Required!',
-                text: 'Please register first to purchase products.',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonColor: '#198754',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Register Now',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = registerUrl;
+            // Category Buttons Styling Update
+            document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                let btnCat = btn.getAttribute('data-category');
+                if (btnCat === currentCategory) {
+                    btn.classList.remove('btn-outline-dark');
+                    btn.classList.add('btn-warning', 'text-dark', 'fw-bold');
+                } else {
+                    btn.classList.remove('btn-warning', 'text-dark', 'fw-bold');
+                    btn.classList.add('btn-outline-dark');
+                }
+            });
+
+            // Gender Buttons Styling Update
+            document.querySelectorAll('.gender-filter-btn').forEach(btn => {
+                let btnGen = btn.getAttribute('data-gender');
+                if (btnGen === currentGender) {
+                    btn.classList.remove('btn-outline-dark');
+                    btn.classList.add('btn-warning', 'text-dark', 'fw-bold');
+                } else {
+                    btn.classList.remove('btn-warning', 'text-dark', 'fw-bold');
+                    btn.classList.add('btn-outline-dark');
                 }
             });
         }
+
+        // Corrected Dynamic AJAX Filtering logic
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterButtons = document.querySelectorAll('.category-filter-btn, .gender-filter-btn');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    // Current URL parameters
+                    let currentUrl = new URL(window.location.href);
+                    let params = new URLSearchParams(currentUrl.search);
+
+                    // Category Parameter
+                    if (this.classList.contains('category-filter-btn')) {
+                        let selectedCategory = this.getAttribute('data-category');
+                        if (selectedCategory) {
+                            params.set('category', selectedCategory);
+                        } else {
+                            params.delete('category');
+                        }
+                    }
+
+                    // Gender Parameter
+                    if (this.classList.contains('gender-filter-btn')) {
+                        let selectedGender = this.getAttribute('data-gender');
+                        if (selectedGender) {
+                            params.set('gender', selectedGender);
+                        } else {
+                            params.delete('gender');
+                        }
+                    }
+
+                    // URL
+                    let requestUrl = "{{ route('shop.index') }}" + (params.toString() ? '?' +
+                        params.toString() : '');
+
+                    // AJAX Request
+                    fetch(requestUrl, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            document.querySelector('.product-grid-5').outerHTML = html;
+                            window.history.pushState({}, '', requestUrl);
+
+                            // Active Style Function Update
+                            updateActiveFilters(requestUrl);
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            });
+
+            // Browser Back / Forward Active State
+            window.addEventListener('popstate', function() {
+                updateActiveFilters(window.location.href);
+            });
+
+
+            // Add to Cart AJAX Logic
+            const cartForms = document.querySelectorAll('.add-to-cart-form');
+            cartForms.forEach(form => {
+                form.addEventListener('submit', function(e){
+                    e.preventDefault();
+
+                    let formData = new FormData(this);
+
+                    fetch("{{ route('cart.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Accept": "application/json" // JSON ပုံစံဖြင့် တောင်းဆိုခြင်း
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json()) // JSON အဖြစ် ပြောင်းလဲလက်ခံခြင်း
+                    .then(data => {
+                        if (data.success) {
+                            let cartCountEl = document.getElementById('cart-count');
+                            if (cartCountEl) {
+                                cartCountEl.textContent = data.cartCount;
+                            }
+
+                            // SweetAlert Toast Notification
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Added to Cart',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                toast: true,
+                                position: 'top-end'
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+
+            })
+
+        });
     </script>
 @endsection
