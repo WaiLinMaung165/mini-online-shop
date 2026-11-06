@@ -3,11 +3,13 @@
 // use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +35,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/shop/index', function () {
         return view('shop.index');
     })->name('customer.dashboard');
+    Route::resource('checkout', CheckoutController::class);
+    Route::resource('payment-methods', PaymentMethodController::class);
 });
 
 // User Profile Routes

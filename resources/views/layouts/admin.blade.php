@@ -115,7 +115,7 @@
                     @can('products.index')
                         <li class="nav-item">
                             <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                                <i class="fa-solid fa-clock-rotate-left me-2"></i> Manage Watches
+                                <i class="fa-solid fa-plus me-2"></i></i> Manage Products
                             </a>
                         </li>
                     @endcan

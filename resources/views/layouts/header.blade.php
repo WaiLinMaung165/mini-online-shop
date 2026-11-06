@@ -13,13 +13,13 @@
             <!-- Navigation Links -->
             <div class="col-lg-6 order-3 order-lg-2" style="font-family: 'Crimson Text', serif;">
                 <ul class="nav justify-content-center main-nav-menu">
-                    @guest
-                        <!-- Login Menu -->
-                        <li class="nav-item"><a class="nav-link {{ Request::routeIs('shop.index') ? 'active text-warning' : ''}}" href="{{ route('shop.index') }}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
-                    @endguest
+                    <!-- Login Menu -->
+                    <li class="nav-item"><a
+                            class="nav-link {{ Request::routeIs('shop.index') ? 'active text-warning' : '' }}"
+                            href="{{ route('shop.index') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li>
                 </ul>
             </div>
 
@@ -28,15 +28,22 @@
                 <div class="header-icons d-flex align-items-center justify-content-end gap-3">
                     {{-- <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i><span
                             class="badge-count">0</span></a> --}}
-                    <a href="{{ route('cart.index') }}" title="Shopping Cart" class="{{ Request::routeIs('cart.index') ? 'text-warning fw-bold' : ''}}"><i class="fa-solid fa-cart-shopping"></i><span
-                            class="badge-count bg-success" id="cart-count">{{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}</span></a>
+                    <a href="{{ route('cart.index') }}" title="Shopping Cart"
+                        class="{{ Request::routeIs('cart.index') ? 'text-warning fw-bold' : '' }}"><i
+                            class="fa-solid fa-cart-shopping"></i><span class="badge-count bg-success"
+                            id="cart-count">{{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}</span></a>
                     <div class="vr bg-secondary d-none d-sm-block" style="height: 20px; opacity: 0.4;"></div>
 
                     @guest
                         <div class="d-flex align-items-center gap-2 ms-1" style="font-family: 'Crimson Text', serif;">
-                            <a href="{{ route('login') }}" class="btn-auth-login" style="font-size: 15px;">Login</a>
-                            <a href="{{ route('register') }}" class="btn-auth-register"
-                                style="font-size: 15px;">Register</a>
+                            <!-- Login Modal Trigger -->
+                            <button type="button" class="btn btn-link text-white text-decoration-none p-0 me-2"
+                                data-bs-toggle="modal" data-bs-target="#loginModal" style="font-size: 15px;">Login</button>
+
+                            <!-- Register Modal Trigger -->
+                            <button type="button" class="btn btn-link text-white text-decoration-none p-0 me-2"
+                                data-bs-toggle="modal" data-bs-target="#registerModal"
+                                style="font-size: 14px;">Register</button>
                         </div>
                     @endguest
 

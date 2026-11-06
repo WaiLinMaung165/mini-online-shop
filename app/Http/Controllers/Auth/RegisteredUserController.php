@@ -50,6 +50,10 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        $cart = session('cart', []);
+    if (count($cart) > 0) {
+        return redirect()->route('checkout.index');
+    }
 
         return redirect()->intended(route('shop.index', absolute: false));
     }

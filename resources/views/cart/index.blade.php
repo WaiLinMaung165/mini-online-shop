@@ -143,10 +143,19 @@
                                 id="grand-total-amount">${{ number_format($grandTotal, 2) }}</span>
                         </div>
 
-                        <a href="#"
-                            class="btn btn-success btn-md rounded-pill fw-semibold text-white w-100 py-2 shadow-sm">
-                            Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
-                        </a>
+                        @auth
+                            <a href="{{ route('checkout.index') }}"
+                                class="btn btn-success btn-md rounded-pill fw-semibold text-white w-100 py-2 shadow-sm border-0">
+                                Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
+                            </a>
+                        @endauth
+
+                        @guest
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#loginModal"
+                                class="btn btn-success btn-md rounded-pill fw-semibold text-white w-100 py-2 shadow-sm border-0">
+                                Proceed to Checkout <i class="fa-solid fa-arrow-right ms-2"></i>
+                            </button>
+                        @endguest
                     </div>
                 </div>
             </div>

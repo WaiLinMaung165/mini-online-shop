@@ -254,8 +254,193 @@
         @include('layouts.footer')
     @endguest
 
+    <!-- ========================================== -->
+    <!-- GLOBAL LOGIN & REGISTER MODALS             -->
+    <!-- ========================================== -->
+
+    <!-- 1. Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0" style="font-family: 'Crimson Text', serif;">
+                    <h3 class="text-center mb-4">Welcome Back</h3>
+
+                    {{-- <!-- Session Status -->
+                    @if (session('status'))
+                        <div class="alert alert-success mb-3">{{ session('status') }}</div>
+                    @endif
+
+                    <!-- General Login Error (အကယ်၍ ရှိပါက) -->
+                    @if ($errors->has('email') && !old('name') && $errors->first('email'))
+                        <div class="alert alert-danger py-2 mb-3" style="font-size: 14px;">
+                            {{ $errors->first('email') }}
+                        </div>
+                    @endif --}}
+
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        <!-- Email -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email"
+                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                required autofocus>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password"
+                                class="form-control @error('password') is-invalid @enderror" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Remember Me -->
+                        <div class="mb-3 form-check text-start">
+                            <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2">Login</button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <a href="#" class="text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#registerModal" data-bs-dismiss="modal">
+                            Don't have an account? Register
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0" style="font-family: 'Crimson Text', serif;">
+                    <h3 class="text-center mb-4">Create Account</h3>
+
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        <!-- Name -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name"
+                                class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}"
+                                required autofocus>
+                            @error('name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email"
+                                class="form-control @error('email') is-invalid @enderror"
+                                value="{{ old('name') ? old('email') : '' }}" required>
+                            @error('email')
+                                @if (old('name') || old('phone'))
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @endif
+                            @enderror
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone"
+                                class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}"
+                                required>
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password"
+                                class="form-control @error('password') is-invalid @enderror" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Confirm Password</label>
+                            <input type="password" name="password_confirmation" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2">Register</button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <a href="#" class="text-decoration-none" data-bs-toggle="modal"
+                            data-bs-target="#loginModal" data-bs-dismiss="modal">
+                            Already have an account? Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        @if (($errors->has('email') && !old('name')) || $errors->has('password'))
+            @if (!old('name') && empty(old('phone')))
+                var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            @endif
+        @endif
+
+        @if ($errors->has('name') || $errors->has('phone') || ($errors->has('email') && old('name')))
+            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+        @endif
+    });
+    const allModals = document.querySelectorAll('.modal');
+    allModals.forEach(modal => {
+        let isSubmittedOrClosedExplicitly = false;
+
+        const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                isSubmittedOrClosedExplicitly = true;
+            });
+        });
+
+        modal.addEventListener('hidden.bs.modal', function() {
+            if (window.location.pathname.includes('/cart') || window.location.pathname.includes('/checkout')) {
+                return;
+            }
+
+            if (isSubmittedOrClosedExplicitly || window.location.search.length > 0) {
+                window.location.href = "{{ route('shop.index') }}";
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

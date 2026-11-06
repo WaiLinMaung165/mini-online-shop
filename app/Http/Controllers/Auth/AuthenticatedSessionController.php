@@ -34,6 +34,12 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
+        $cart = session('cart', []);
+        if (count($cart) > 0) {
+
+            return redirect()->intended(route('checkout.index'));
+        }
+
         return redirect()->intended(route('shop.index'));
     }
 
