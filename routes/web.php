@@ -28,6 +28,7 @@ Route::middleware(['auth', 'permission:access-admin'])->prefix('admin')->name('a
     Route::resource('permissions',PermissionController::class);
     Route::resource('users',UserController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('payment_methods', PaymentMethodController::class);
 });
 
 // Customer Dashboard Route

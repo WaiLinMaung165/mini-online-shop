@@ -26,7 +26,7 @@ class PaymentMethodController extends Controller
             'name' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
-            'qr_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'qr_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'is_active' => 'boolean',
         ]);
 
@@ -43,7 +43,7 @@ class PaymentMethodController extends Controller
             'is_active' => $request->has('is_active') ? true : false,
         ]);
 
-        return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method created successfully.');
+        return redirect()->route('admin.payment_methods.index')->with('success', 'Payment method created successfully.');
     }
 
     public function edit(PaymentMethod $paymentMethod)
@@ -57,7 +57,7 @@ class PaymentMethodController extends Controller
             'name' => 'required|string|max:255',
             'account_name' => 'required|string|max:255',
             'account_number' => 'required|string|max:255',
-            'qr_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'qr_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'is_active' => 'boolean',
         ]);
 
@@ -77,7 +77,7 @@ class PaymentMethodController extends Controller
             'is_active' => $request->has('is_active') ? true : false,
         ]);
 
-        return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method updated successfully.');
+        return redirect()->route('admin.payment_methods.index')->with('success', 'Payment method updated successfully.');
     }
 
     public function destroy(PaymentMethod $paymentMethod)
@@ -88,6 +88,6 @@ class PaymentMethodController extends Controller
 
         $paymentMethod->delete();
 
-        return redirect()->route('admin.payment-methods.index')->with('success', 'Payment method deleted successfully.');
+        return redirect()->route('admin.payment_methods.index')->with('success', 'Payment method deleted successfully.');
     }
 }
