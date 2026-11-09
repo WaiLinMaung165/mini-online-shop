@@ -3,6 +3,9 @@
 // use App\Http\Controllers\ProfileController;
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
+// use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\OrderStatusController;
 use App\Http\Controllers\Admin\PaymentMethodController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProductController;
@@ -10,6 +13,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,15 +24,15 @@ Route::resource('cart', CartController::class)->except(['create','edit','show'])
 
 // Admin Dashboard Route
 Route::middleware(['auth', 'permission:access-admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
     Route::resource('categories', CategoryController::class);
     Route::resource('roles',RoleController::class);
     Route::resource('permissions',PermissionController::class);
     Route::resource('users',UserController::class);
     Route::resource('products', ProductController::class);
     Route::resource('payment_methods', PaymentMethodController::class);
+    Route::resource('orders', OrderStatusController:: class);
 });
 
 // Customer Dashboard Route
@@ -38,6 +42,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     })->name('customer.dashboard');
     Route::resource('checkout', CheckoutController::class);
     Route::resource('payment-methods', PaymentMethodController::class);
+    Route::resource('orders', OrderController::class);
 });
 
 // User Profile Routes

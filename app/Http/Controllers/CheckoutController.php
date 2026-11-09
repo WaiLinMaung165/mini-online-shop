@@ -31,7 +31,7 @@ class CheckoutController extends Controller
             'phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
             'payment_method_id' => 'required|exists:payment_methods,id',
-            'payment_slip' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'payment_slip' => 'required|image|mimes:jpeg,webp,png,jpg|max:2048',
         ]);
 
         $cart = session('cart', []);
@@ -79,6 +79,6 @@ class CheckoutController extends Controller
 
         session()->forget('cart');
 
-        return redirect()->route('shop.index')->with('success', 'Order placed successfully! Please wait for confirmation.');
+        return redirect()->route('orders.index')->with('success', 'Order placed successfully! Please wait for confirmation.');
     }
 }
