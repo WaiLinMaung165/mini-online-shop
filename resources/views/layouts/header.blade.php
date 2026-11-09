@@ -34,6 +34,7 @@
                             id="cart-count">{{ session('cart') ? collect(session('cart'))->sum('quantity') : 0 }}</span></a>
                     <div class="vr bg-secondary d-none d-sm-block" style="height: 20px; opacity: 0.4;"></div>
 
+
                     @guest
                         <div class="d-flex align-items-center gap-2 ms-1" style="font-family: 'Crimson Text', serif;">
                             <!-- Login Modal Trigger -->
@@ -52,24 +53,34 @@
                             <a href="#"
                                 class="d-flex align-items-center text-decoration-name text-white dropdown-toggle"
                                 id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <!-- User Icon -->
                                 <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-warning me-2"
                                     style="width: 35px; height: 35px; background-color: rgba(255, 193, 7, 0.1) !important; border: 1px solid rgba(255, 193, 7, 0.3);">
                                     <i class="fa-solid fa-user" style="font-size: 14px;"></i>
                                 </div>
-                                <!-- User Name -->
                                 <span class="text-white fw-semibold"
                                     style="font-size: 15px; font-family: 'Crimson Text', serif;">{{ Auth::user()->name }}</span>
                             </a>
 
                             <!-- Dropdown Menu -->
-                            <ul class="dropdown-menu dropdown-menu-white dropdown-menu-end shadow"
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow"
                                 aria-labelledby="userDropdown" style="font-family: 'Crimson Text', serif;">
+
+                                <!-- My Orders Menu Item -->
+                                <li>
+                                    <a class="dropdown-item py-2 text-white" href="{{ route('orders.index') }}" style="font-size: 15px;">
+                                        <i class="fa-solid fa-box-archive me-2 text-warning"></i>My Orders
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider border-secondary">
+                                </li>
+
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item py-2 text-success"><i
-                                                class="fa-solid fa-right-from-bracket me-2"></i>Logout</button>
+                                        <button type="submit" class="dropdown-item py-2 text-white">
+                                            <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                                        </button>
                                     </form>
                                 </li>
                             </ul>

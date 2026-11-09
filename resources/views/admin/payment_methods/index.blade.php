@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-dark">Payment Methods Management</h3>
-        <a href="{{ route('admin.payment-methods.create') }}" class="btn btn-primary">
+        <a href="{{ route('admin.payment_methods.create') }}" class="btn btn-primary">
             <i class="fa-solid fa-plus me-1"></i> Add New Payment Method
         </a>
     </div>
@@ -40,10 +40,10 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.payment-methods.edit', $method->id) }}" class="btn btn-sm btn-warning text-white">
+                                <a href="{{ route('admin.payment_methods.edit', $method->id) }}" class="btn btn-sm btn-warning text-white">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('admin.payment-methods.destroy', $method->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this?');">
+                                <form action="{{ route('admin.payment_methods.destroy', $method->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">

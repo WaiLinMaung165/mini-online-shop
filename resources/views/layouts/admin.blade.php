@@ -123,8 +123,17 @@
                     <!-- Orders -->
                     @can('orders.index')
                         <li class="nav-item">
-                            <a href="#" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                                <i class="fa-solid fa-bag-shopping me-2"></i> Orders
+                            <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
+                                <i class="fa-solid fa-bag-shopping me-2"></i> Manage Orders
+                            </a>
+                        </li>
+                    @endcan
+
+
+                    @can('payment_methods.index')
+                        <li class="nav-item">
+                            <a href="{{ route('admin.payment_methods.index') }}" class="nav-link {{ request()->routeIs('admin.payment_methods.*') ? 'active' : '' }}">
+                                <i class="fa-solid fa-dollar-sign me-2"></i> Payment Method
                             </a>
                         </li>
                     @endcan
