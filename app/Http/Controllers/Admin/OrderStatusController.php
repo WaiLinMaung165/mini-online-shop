@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\OrdersExport;
 use App\Http\Controllers\Controller;
+use App\Mail\SendInvoiceMail;
 use App\Models\Inventory;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrderStatusController extends Controller
 {
@@ -17,7 +22,7 @@ class OrderStatusController extends Controller
     {
         $orders = Order::with('user', 'orderItems.product', 'payment.paymentMethod')
             ->latest()
-            ->paginate(10);
+            ->paginate(7);
         return view('admin.orders.index', compact('orders'));
     }
 
@@ -61,7 +66,7 @@ class OrderStatusController extends Controller
     {
 
         $request->validate([
-            'status' => 'required|in:Pending,Approved,Completed,Cancelled'
+            'status' => 'required|in:Pending,Approved,Shipped,Completed,Cancelled'
         ]);
 
         $oldStatus = $order->status;
@@ -104,6 +109,14 @@ class OrderStatusController extends Controller
             }
         });
 
+        if ($order->status == 'Approved' && $order->user && $order->user->email) {
+    try {
+        Mail::to($order->user->email)->send(new SendInvoiceMail($order));
+    } catch (\Exception $e) {
+        Log::error('Invoice Email sending failed for order ' . $order->order_code . ': ' . $e->getMessage());
+    }
+}
+
         return redirect()->back()->with('success', 'Order status updated successfully!');
     }
 
@@ -113,5 +126,9 @@ class OrderStatusController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function exportExcel(){
+        return Excel::download(new OrdersExport, 'customer_orders_' . now()->format('Y_m_d_His') . '.xlsx');
     }
 }

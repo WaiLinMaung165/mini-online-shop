@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $totalProducts = Product::count();
         $totalOrders = Order::count();
         $totalUsers = User::count();
-        $totalSales = Order::where('status', 'Completed')->sum('total_amount');
+        $totalSales = Order::whereIn('status', ['Approved', 'Shipped', 'Completed'])->sum('total_amount');
 
         $filter = $request->get('filter', 'monthly');
         $chartLabels = [];

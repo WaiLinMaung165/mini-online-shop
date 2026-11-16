@@ -14,23 +14,34 @@ class ShopController extends Controller
         $categories = Category::all();
         $query = Product::with(['category', 'inventory']);
 
-    // Category Filter
-    if ($request->has('category') && $request->category != '') {
-        $query->where('category_id', $request->category);
-    }
+        // Category Filter
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category_id', $request->category);
+        }
 
-    // Gender Filter (men, women, unisex)
-    if ($request->has('gender') && $request->gender != '') {
-        $query->where('gender', $request->gender);
-    }
+        // Gender Filter (men, women, unisex)
+        if ($request->has('gender') && $request->gender != '') {
+            $query->where('gender', $request->gender);
+        }
 
-    $products = $query->latest()->get();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhereHas('category', function ($subQuery) use ($search) {
+                        $subQuery->where('name', 'LIKE', "%{$search}%");
+                    });
+            });
+        }
 
-    if ($request->ajax()){
-        return view('shop.partials.products', compact('products'))->render();
-    }
+        $products = $query->latest()->get();
 
-    return view('shop.index', compact('products', 'categories'));
+        if ($request->ajax()) {
+            return view('shop.partials.products', compact('products'))->render();
+        }
+
+        return view('shop.index', compact('products', 'categories'));
     }
 
     public function show(Product $product)

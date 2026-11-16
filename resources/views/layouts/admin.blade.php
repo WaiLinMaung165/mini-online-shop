@@ -115,7 +115,15 @@
                     @can('products.index')
                         <li class="nav-item">
                             <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                                <i class="fa-solid fa-plus me-2"></i></i> Manage Products
+                                <i class="fa-solid fa-plus me-2"></i> Manage Products
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('coupons.index')
+                        <li class="nav-item">
+                            <a href="{{ route('admin.coupons.index') }}" class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
+                                <i class="fa-solid fa-gift"></i> Discount Coupons
                             </a>
                         </li>
                     @endcan

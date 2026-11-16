@@ -258,7 +258,7 @@
     <!-- GLOBAL LOGIN & REGISTER MODALS             -->
     <!-- ========================================== -->
 
-    <!-- 1. Login Modal -->
+    <!-- Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-sm">
@@ -273,7 +273,7 @@
                         <div class="alert alert-success mb-3">{{ session('status') }}</div>
                     @endif
 
-                    <!-- General Login Error (အကယ်၍ ရှိပါက) -->
+                    <!-- General Login Error -->
                     @if ($errors->has('email') && !old('name') && $errors->first('email'))
                         <div class="alert alert-danger py-2 mb-3" style="font-size: 14px;">
                             {{ $errors->first('email') }}
@@ -286,10 +286,10 @@
                         <!-- Email -->
                         <div class="mb-3 text-start">
                             <label class="form-label">Email Address</label>
-                            <input type="email" name="email"
-                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
-                                required autofocus>
-                            @error('email')
+                            <input type="email" name="login-email"
+                                class="form-control @error('login-email') is-invalid @enderror"
+                                value="{{ old('login-email') }}" required autofocus>
+                            @error('login-email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -297,17 +297,31 @@
                         <!-- Password -->
                         <div class="mb-3 text-start">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password"
-                                class="form-control @error('password') is-invalid @enderror" required>
-                            @error('password')
+                            <input type="password" name="login-password"
+                                class="form-control @error('login-password') is-invalid @enderror" required>
+                            @error('login-password')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <!-- Remember Me -->
-                        <div class="mb-3 form-check text-start">
-                            <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                            <label class="form-check-label" for="remember">Remember me</label>
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check text-start">
+                                <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
+                            </div>
+                            <div>
+                                <a href="#" class="text-decoration-none" style="font-size: 14px;"
+                                    data-bs-toggle="modal" data-bs-target="#forgotPasswordModal"
+                                    data-bs-dismiss="modal">
+                                    Forgot password?
+                                </a>
+                            </div>
+                        </div>
+                        <div class=" mt-2 mb-2">
+                            <a href="{{ route('google.login') }}" class="btn btn-primary w-100 py-2">
+                            <i class="fab fa-google"></i> Google
+                        </a>
                         </div>
 
                         <button type="submit" class="btn btn-success w-100 py-2">Login</button>
@@ -324,7 +338,7 @@
         </div>
     </div>
 
-    <!-- 2. Register Modal -->
+    <!-- Register Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-sm">
@@ -402,45 +416,110 @@
         </div>
     </div>
 
+    <!-- 3. Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0" style="font-family: 'Crimson Text', serif;">
+                    <h3 class="text-center mb-3">Reset Password</h3>
+                    <p class="text-muted text-center mb-4" style="font-size: 14px;">
+                        Forgot your password? No problem. Just let us know your email address and we will email you a
+                        password reset link.
+                    </p>
+
+                    <!-- Session Status -->
+                    @if (session('status'))
+                        <div class="alert alert-success mb-3" style="font-size: 14px;">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('password.email') }}">
+                        @csrf
+
+                        <!-- Email Address -->
+                        <div class="mb-3 text-start">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email"
+                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                required autofocus>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-2">Email Password Reset Link</button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal"
+                            data-bs-target="#loginModal" data-bs-dismiss="modal">
+                            Back to Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap 5 JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        @if (($errors->has('email') && !old('name')) || $errors->has('password'))
-            @if (!old('name') && empty(old('phone')))
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (
+                $errors->has('name') ||
+                    $errors->has('phone') ||
+                    $errors->has('email') ||
+                    $errors->has('password') ||
+                    $errors->has('password_confirmation'))
+                @if (!$errors->has('login-email') && !$errors->has('login-password'))
+                    var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                    registerModal.show();
+                @endif
+            @endif
+
+            @if ($errors->has('login-email') || $errors->has('login-password'))
                 var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                 loginModal.show();
             @endif
-        @endif
 
-        @if ($errors->has('name') || $errors->has('phone') || ($errors->has('email') && old('name')))
-            var registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-            registerModal.show();
-        @endif
-    });
-    const allModals = document.querySelectorAll('.modal');
-    allModals.forEach(modal => {
-        let isSubmittedOrClosedExplicitly = false;
+            @if (session('status') || ($errors->has('email') && !old('name') && !old('login-email')))
+                var forgotPasswordModal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+                forgotPasswordModal.show();
+            @endif
+        });
 
-        const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
-        closeButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                isSubmittedOrClosedExplicitly = true;
+        const allModals = document.querySelectorAll('.modal');
+        allModals.forEach(modal => {
+            let isXClicked = false;
+
+            const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"]');
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.hasAttribute('data-bs-target')) {
+                        isXClicked = false;
+                    } else {
+                        isXClicked = true;
+                    }
+                });
+            });
+
+            modal.addEventListener('hidden.bs.modal', function() {
+                if (window.location.pathname.includes('/cart') || window.location.pathname.includes(
+                        '/checkout')) {
+                    return;
+                }
+
+                if (isXClicked) {
+                    window.location.href = "{{ route('shop.index') }}";
+                }
             });
         });
-
-        modal.addEventListener('hidden.bs.modal', function() {
-            if (window.location.pathname.includes('/cart') || window.location.pathname.includes('/checkout')) {
-                return;
-            }
-
-            if (isSubmittedOrClosedExplicitly || window.location.search.length > 0) {
-                window.location.href = "{{ route('shop.index') }}";
-            }
-        });
-    });
-</script>
+    </script>
 </body>
 
 </html>

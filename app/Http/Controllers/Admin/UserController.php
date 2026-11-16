@@ -68,7 +68,7 @@ class UserController extends Controller
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::where('name', '!=', 'customer')->get();
+        $roles = Role::all();
         return view('admin.users.edit', compact('user', 'roles'));
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ProductsExport;
 use App\Http\Controllers\Controller;
+use App\Imports\ProductsImport;
 use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Product;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -27,7 +30,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['category', 'inventory'])->latest()->paginate(5);
+        $products = Product::with(['category', 'inventory'])->latest()->paginate(9);
         return view('admin.products.index', compact('products'));
     }
 
@@ -38,6 +41,26 @@ class ProductController extends Controller
     {
         $categories = Category::all();
         return view('admin.products.create', compact('categories'));
+    }
+
+    public function export()
+    {
+        return Excel::download(new ProductsExport, 'products-' . date('Y-m-d') . '.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('file'));
+
+            return redirect()->back()->with('success', 'Products imported successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     /**

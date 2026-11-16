@@ -144,18 +144,29 @@
                                 @enderror
                             </div>
 
-                            <!-- Total Amount Box -->
-                            @php
-                                $grandTotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-                            @endphp
-                            <div
-                                class="p-3 bg-light rounded-3 mb-4 d-flex justify-content-between align-items-center border">
-                                <div>
-                                    <span class="text-muted small d-block" style="font-size: 11px; font-weight: bold;">TOTAL
-                                        AMOUNT</span>
-                                    <h4 class="fw-bold text-success mb-0">${{ number_format($grandTotal, 2) }}</h4>
+                            <!-- Total Amount Summary Box -->
+                            <div class="p-3 bg-light rounded-3 mb-4 border">
+                                <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
+                                    <span>Subtotal</span>
+                                    <span class="fw-bold text-dark">${{ number_format($cartSubtotal, 2) }}</span>
                                 </div>
-                                <span class="badge bg-white text-dark border px-3 py-2">Cart Total</span>
+
+                                @if ($discountAmount > 0)
+                                    <div class="d-flex justify-content-between align-items-center mb-2 small text-success">
+                                        <span>Discount ({{ $appliedCouponCode }})</span>
+                                        <span class="fw-bold">-${{ number_format($discountAmount, 2) }}</span>
+                                    </div>
+                                    <hr class="my-2">
+                                @endif
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="text-muted small d-block"
+                                            style="font-size: 11px; font-weight: bold;">GRAND TOTAL</span>
+                                        <h4 class="fw-bold text-success mb-0">${{ number_format($grandTotal, 2) }}</h4>
+                                    </div>
+                                    <span class="badge bg-white text-dark border px-3 py-2">To Pay</span>
+                                </div>
                             </div>
 
                             <!-- Confirm Order Button -->

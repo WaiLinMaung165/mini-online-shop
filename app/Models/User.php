@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Database\Factories\UserFactory;
+use App\Models\Wishlist;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,7 +43,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function orders(){
-        return $this->hasMany(Order::class,'user_id','user_id');
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id', 'user_id');
+    }
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
     }
 }

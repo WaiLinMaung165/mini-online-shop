@@ -3,11 +3,19 @@
 
 @section('content')
     <div class="container-fluid py-4">
-        <h2 class="fw-bold text-dark mb-4">
-            <i class="fa-solid fa-clipboard-list me-2 text-warning"></i> Customer Orders Management
-        </h2>
+        <!-- Header Section with Excel Export Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-dark mb-0">
+                <i class="fa-solid fa-clipboard-list me-2 text-warning"></i> Customer Orders Management
+            </h2>
 
-        @if(session('success'))
+            <!-- Excel Export Button -->
+            <a href="{{ route('admin.orders.exportExcel') }}" class="btn btn-success rounded-pill px-3 shadow-sm">
+                <i class="fa-solid fa-file-excel me-1"></i> Export to Excel
+            </a>
+        </div>
+
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -35,14 +43,29 @@
                                 <td>{{ $order->user->name ?? 'Guest' }}</td>
                                 <td>
                                     <span class="d-block small">{{ $order->phone }}</span>
-                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 150px;">{{ $order->shipping_address }}</span>
+                                    <span class="text-muted small text-truncate d-inline-block"
+                                        style="max-width: 150px;">{{ $order->shipping_address }}</span>
                                 </td>
-                                <td class="fw-bold text-success">${{ number_format($order->total_amount, 2) }}</td>
+                                <td class="align-middle">
+                                    @php
+                                        $itemSubtotal = $order->orderItems->sum(fn($i) => $i->price * $i->quantity);
+                                        $calculatedDiscount = $itemSubtotal - $order->total_amount;
+                                    @endphp
+
+                                    @if ($calculatedDiscount > 0)
+                                        <span class="text-muted text-decoration-line-through small d-block">
+                                            ${{ number_format($itemSubtotal, 2) }}
+                                        </span>
+                                    @endif
+                                    <span class="fw-bold text-success">${{ number_format($order->total_amount, 2) }}</span>
+                                </td>
                                 <td>
-                                    @if($order->status == 'Pending')
+                                    @if ($order->status == 'Pending')
                                         <span class="badge bg-warning text-dark px-2 py-1">Pending</span>
                                     @elseif($order->status == 'Approved')
                                         <span class="badge bg-info text-dark px-2 py-1">Approved</span>
+                                    @elseif($order->status == 'Shipped')
+                                        <span class="badge bg-primary px-2 py-1">Shipped</span>
                                     @elseif($order->status == 'Completed')
                                         <span class="badge bg-success px-2 py-1">Completed</span>
                                     @else
@@ -51,7 +74,8 @@
                                 </td>
                                 <td class="small text-muted">{{ $order->created_at->format('d M Y, h:i A') }}</td>
                                 <td class="text-end">
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}"
+                                        class="btn btn-sm btn-outline-dark rounded-pill px-3">
                                         <i class="fa-solid fa-eye me-1"></i> Details
                                     </a>
                                 </td>
@@ -65,7 +89,7 @@
                 </table>
             </div>
             <div class="p-3">
-                {{ $orders->links() }}
+                {{ $orders->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

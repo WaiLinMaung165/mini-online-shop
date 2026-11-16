@@ -1,16 +1,32 @@
 @extends('layouts.admin')
 
 @section('content')
+
     <div class="container-fluid px-4 py-3">
 
-        <!-- Header & Add Button -->
+        <!-- Header & Buttons -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="fw-bold text-dark mb-0">Manage Products</h4>
-            @can('products.create')
-                <a href="{{ route('admin.products.create') }}" class="btn btn-warning fw-semibold px-3 py-2">
-                    <i class="fa-solid fa-plus me-1"></i> Add Product
-                </a>
-            @endcan
+
+            <div class="d-flex gap-2">
+                <!-- Add Product Button -->
+                @can('products.create')
+                    <!-- Export Excel Button -->
+                    <a href="{{ route('admin.products.export') }}" class="btn btn-outline-success btn-sm fw-semibold px-3 py-2">
+                        <i class="fa-solid fa-file-excel me-1"></i> Export Excel
+                    </a>
+
+                    <!-- Import Excel Button -->
+                    <button type="button" class="btn btn-success btn-sm fw-semibold px-3 py-2" data-bs-toggle="modal"
+                        data-bs-target="#excelImportModal">
+                        <i class="fa-solid fa-file-arrow-up me-1"></i> Import Excel
+                    </button>
+
+                    <a href="{{ route('admin.products.create') }}" class="btn btn-warning fw-semibold px-3 py-2">
+                        <i class="fa-solid fa-plus me-1"></i> Add Product
+                    </a>
+                @endcan
+            </div>
         </div>
 
         <!-- Products Table Card -->
@@ -50,12 +66,13 @@
                                         </span>
                                     </td>
                                     <td>
-                                        @if($product->gender == 'men')
+                                        @if ($product->gender == 'men')
                                             <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">Men</span>
                                         @elseif($product->gender == 'women')
                                             <span class="badge bg-danger bg-opacity-10 text-danger px-2 py-1">Women</span>
                                         @else
-                                            <span class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">Unisex</span>
+                                            <span
+                                                class="badge bg-secondary bg-opacity-10 text-secondary px-2 py-1">Unisex</span>
                                         @endif
                                     </td>
                                     <td class="fw-semibold text-success">
@@ -82,21 +99,16 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="d-flex justify-content-center gap-2">
-                                            <!-- View Button (Slug based) -->
                                             <a href="{{ route('admin.products.show', $product) }}"
                                                 class="btn btn-sm btn-outline-info px-2 py-1" title="View">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-
-                                            <!-- Edit Button (Slug based) -->
                                             @can('products.edit')
                                                 <a href="{{ route('admin.products.edit', $product) }}"
                                                     class="btn btn-sm btn-outline-primary px-2 py-1" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
                                             @endcan
-
-                                            <!-- Delete Button (Slug based) -->
                                             @can('products.delete')
                                                 <button type="button"
                                                     class="btn btn-sm btn-outline-danger px-2 py-1 delete-btn"
@@ -121,7 +133,7 @@
                 </div>
             </div>
 
-            <!-- Pagination Links (Bootstrap 5) -->
+            <!-- Pagination Links -->
             @if ($products->hasPages())
                 <div class="card-footer bg-white py-3">
                     {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
@@ -129,5 +141,37 @@
             @endif
         </div>
 
+    </div>
+
+    <!-- Excel Import Modal -->
+    <div class="modal fade" id="excelImportModal" tabindex="-1" aria-labelledby="excelImportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('admin.products.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold" id="excelImportModalLabel">Import Products from Excel</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="excel_file" class="form-label fw-semibold">Choose Excel File (.xlsx, .xls,
+                                .csv)</label>
+                            <input type="file" class="form-control" id="excel_file" name="file"
+                                accept=".xlsx, .xls, .csv" required>
+                        </div>
+                        <div class="form-text text-muted">
+                            <small>The Excel file must contain headings such as <code>category</code>, <code>name</code>,
+                                <code>image</code>, <code>gender</code>, <code>price</code>, <code>stock_quantity</code>, and
+                                <code>description</code>.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success btn-sm">Upload & Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 @endsection

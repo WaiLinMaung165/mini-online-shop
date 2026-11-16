@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +34,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
@@ -66,5 +67,34 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function markAsCompleted(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($order->status === 'Shipped') {
+            $order->update(['status' => 'Completed']);
+
+            if ($order->payment) {
+                $order->payment->update(['status' => 'Completed']);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Thank you! Order marked as completed.');
+    }
+
+    public function downloadInvoice(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $order->load('orderItems.product', 'payment.paymentMethod');
+        $pdf = Pdf::loadView('orders.invoice', compact('order'));
+
+        return $pdf->download('Invoice-' . $order->order_code . '.pdf');
     }
 }
